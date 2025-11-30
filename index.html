@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Research Scraper AI (Multi-Model)</title>
+    <!-- Styles & Icons -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <script>
@@ -43,6 +44,7 @@
         body { display: block; background-color: #0f172a; }
         html, body { height: 100%; overflow: hidden; }
     </style>
+    <!-- Libraries -->
     <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -60,10 +62,85 @@
         const { useState, useEffect, useRef } = React;
 
         // CONFIG: TAGS
-        const AVAILABLE_TAGS = ["Lectura", "escritura", "lenguaje oral", "aprendizaje cooperativo", "autonomía", "memoria", "carga cognitiva", "ABP", "Inteligencia Artificial"].sort();
+        const AVAILABLE_TAGS = [
+            "[ PROCESOS ]  Atención",
+            "[ PROCESOS ]  Autonomía",
+            "[ PROCESOS ]  Carga cognitiva",
+            "[ PROCESOS ]  Ciencias del Aprendizaje",
+            "[ PROCESOS ]  Creatividad",
+            "[ PROCESOS ]  Desarrollo cognitivo",
+            "[ PROCESOS ]  Estilos de aprendizaje",
+            "[ PROCESOS ]  Funciones ejecutivas",
+            "[ PROCESOS ]  Memoria",
+            "[ PROCESOS ]  Metacognición",
+            "[ PROCESOS ]  Motivación",
+            "[ PROCESOS ]  Neuroeducación",
+            "[ PROCESOS ]  Pensamiento Crítico",
+            "[ PROCESOS ]  Psicología",
+            "[ PROCESOS ]  Salud Mental",
+            "[ METODOLOGÍAS ]  Aprendizaje Basado en Proyectos",
+            "[ METODOLOGÍAS ]  Aula del Futuro",
+            "[ METODOLOGÍAS ]  Biblioteca",
+            "[ METODOLOGÍAS ]  Aprendizaje cooperativo",
+            "[ METODOLOGÍAS ]  Aprendizaje Servicio",
+            "[ METODOLOGÍAS ]  Flipped Classroom",
+            "[ METODOLOGÍAS ]  Gamificación",
+            "[ DIDÁCTICA ]  Competencias clave",
+            "[ DIDÁCTICA ]  Idiomas",
+            "[ DIDÁCTICA ]  Ciencias",
+            "[ DIDÁCTICA ]  Matemáticas",
+            "[ DIDÁCTICA ]  Artística",
+            "[ DIDÁCTICA ]  Sociales",
+            "[ DIDÁCTICA ]  Salud",
+            "[ DIDÁCTICA ]  Escritura",
+            "[ DIDÁCTICA ]  Lectura",
+            "[ DIDÁCTICA ]  Lenguaje oral",
+            "[ DIVERSIDAD ]  Adaptaciones curriculares",
+            "[ DIVERSIDAD ]  Altas Capacidades",
+            "[ DIVERSIDAD ]  Autismo",
+            "[ DIVERSIDAD ]  Dislexia",
+            "[ DIVERSIDAD ]  DUA",
+            "[ DIVERSIDAD ]  Educación Inclusiva",
+            "[ DIVERSIDAD ]  Necesidades Educativas Especiales",
+            "[ DIVERSIDAD ]  TDAH",
+            "[ GESTIÓN ]  Absentismo escolar",
+            "[ GESTIÓN ]  Bienestar docente",
+            "[ GESTIÓN ]  Currículo",
+            "[ GESTIÓN ]  Formación del profesorado",
+            "[ GESTIÓN ]  Gestión del aula",
+            "[ GESTIÓN ]  Liderazgo educativo",
+            "[ GESTIÓN ]  Orientación educativa",
+            "[ GESTIÓN ]  Política Educativa",
+            "[ GESTIÓN ]  Rendimiento académico",
+            "[ GESTIÓN ]  Tutoría",
+            "[ CONVIVENCIA ]  Acoso escolar",
+            "[ CONVIVENCIA ]  Clima de aula",
+            "[ CONVIVENCIA ]  Coeducación",
+            "[ CONVIVENCIA ]  Desigualdad educativa",
+            "[ CONVIVENCIA ]  Educación Emocional",
+            "[ CONVIVENCIA ]  Ética",
+            "[ CONVIVENCIA ]  Familia-Escuela",
+            "[ CONVIVENCIA ]  Resolución de conflictos",
+            "[ TIC ]  Inteligencia Artificial",
+            "[ TIC ]  Pensamiento Computacional",
+            "[ TIC ]  Robótica",
+            "[ TIC ]  Competencia digital",
+            "[ EVALUACIÓN ]  Evaluación",
+            "[ EVALUACIÓN ]  Feedback",
+            "[ INVESTIGACIÓN ]  Meta-análisis",
+            "[ INVESTIGACIÓN ]  Revisión Sistemática",
+            "[ INVESTIGACIÓN ]  Teoría Fundamentada",
+            "[ NIVEL ]  Bachillerato",
+            "[ NIVEL ]  Infantil",
+            "[ NIVEL ]  Primaria",
+            "[ NIVEL ]  Secundaria",
+            "[ NIVEL ]  Superior",
+            "#Gap",
+            "#Seed"].sort();
 
-        // 🚀 API CONFIGURATION 🚀
-        const BASE_URL = window.location.origin; 
+        // 🚀 API CONFIGURATION (MODO HÍBRIDO) 🚀
+        // Usamos la dirección real de Vercel para que funcione tanto en la web como en local (file://)
+        const BASE_URL = "https://research-scraper-mu.vercel.app"; 
         const PROXY_ENDPOINT = `${BASE_URL}/api/proxy`;
         const AI_ENDPOINT = `${BASE_URL}/api/ai`;
 
