@@ -5,11 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Research Scraper AI</title>
     
-    <!-- FAVICON MEJORADO: Icono de libro sobre fondo redondeado con gradiente -->
+    <!-- FAVICON MEJORADO -->
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%233b82f6;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%239333ea;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='5' y='5' width='90' height='90' rx='25' fill='url(%23grad)' stroke='%23ffffff' stroke-width='4'/%3E%3Ctext x='50' y='65' font-size='50' text-anchor='middle' fill='white'%3E📖%3C/text%3E%3C/svg%3E">
 
     <!-- Styles & Icons -->
-    <!-- FIX: Cargamos el plugin de tipografía directamente desde el CDN para evitar 'require is not defined' -->
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     
@@ -64,14 +63,13 @@
                   code: { color: theme('colors.pink.300') },
                   'code::before': { content: '""' }, 'code::after': { content: '""' },
                   hr: { borderColor: theme('colors.gray.700'), marginTop: '2.5em', marginBottom: '2.5em' },
-                  p: { marginTop: '1.2em', marginBottom: '1.2em', lineHeight: '1.8' }, // Más aire en los párrafos
+                  p: { marginTop: '1.2em', marginBottom: '1.2em', lineHeight: '1.8' },
                   li: { marginTop: '0.5em', marginBottom: '0.5em' },
                 }
               }
             })
           }
         }
-        // FIX: Eliminada la llamada a 'plugins: [ require(...) ]' ya que se carga por URL
       }
     </script>
     <style>
@@ -83,8 +81,6 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         body { display: block; background-color: #0f172a; }
         html, body { height: 100%; overflow: hidden; }
-        
-        /* Ajuste para que el scroll funcione suave */
         textarea { scroll-behavior: smooth; }
     </style>
     <!-- Libraries -->
@@ -107,8 +103,7 @@
         // CONFIG: TAGS
         const AVAILABLE_TAGS = ["[ PROCESOS ]  Atención","[ PROCESOS ]  Autonomía","[ PROCESOS ]  Carga cognitiva","[ PROCESOS ]  Ciencias del Aprendizaje","[ PROCESOS ]  Creatividad","[ PROCESOS ]  Desarrollo cognitivo","[ PROCESOS ]  Estilos de aprendizaje","[ PROCESOS ]  Funciones ejecutivas","[ PROCESOS ]  Memoria","[ PROCESOS ]  Metacognición","[ PROCESOS ]  Motivación","[ PROCESOS ]  Neuroeducación","[ PROCESOS ]  Pensamiento Crítico","[ PROCESOS ]  Psicología","[ PROCESOS ]  Salud Mental","[ METODOLOGÍAS ]  Aprendizaje Basado en Proyectos","[ METODOLOGÍAS ]  Aula del Futuro","[ METODOLOGÍAS ]  Biblioteca","[ METODOLOGÍAS ]  Aprendizaje cooperativo","[ METODOLOGÍAS ]  Aprendizaje Servicio","[ METODOLOGÍAS ]  Flipped Classroom","[ METODOLOGÍAS ]  Gamificación","[ DIDÁCTICA ]  Competencias clave","[ DIDÁCTICA ]  Idiomas","[ DIDÁCTICA ]  Ciencias","[ DIDÁCTICA ]  Matemáticas","[ DIDÁCTICA ]  Artística","[ DIDÁCTICA ]  Sociales","[ DIDÁCTICA ]  Salud","[ DIDÁCTICA ]  Escritura","[ DIDÁCTICA ]  Lectura","[ DIDÁCTICA ]  Lenguaje oral","[ DIVERSIDAD ]  Adaptaciones curriculares","[ DIVERSIDAD ]  Altas Capacidades","[ DIVERSIDAD ]  Autismo","[ DIVERSIDAD ]  Dislexia","[ DIVERSIDAD ]  DUA","[ DIVERSIDAD ]  Educación Inclusiva","[ DIVERSIDAD ]  Necesidades Educativas Especiales","[ DIVERSIDAD ]  TDAH","[ GESTIÓN ]  Absentismo escolar","[ GESTIÓN ]  Bienestar docente","[ GESTIÓN ]  Currículo","[ GESTIÓN ]  Formación del profesorado","[ GESTIÓN ]  Gestión del aula","[ GESTIÓN ]  Liderazgo educativo","[ GESTIÓN ]  Orientación educativa","[ GESTIÓN ]  Política Educativa","[ GESTIÓN ]  Rendimiento académico","[ GESTIÓN ]  Tutoría","[ CONVIVENCIA ]  Acoso escolar","[ CONVIVENCIA ]  Clima de aula","[ CONVIVENCIA ]  Coeducación","[ CONVIVENCIA ]  Desigualdad educativa","[ CONVIVENCIA ]  Educación Emocional","[ CONVIVENCIA ]  Ética","[ CONVIVENCIA ]  Familia-Escuela","[ CONVIVENCIA ]  Resolución de conflictos","[ TIC ]  Inteligencia Artificial","[ TIC ]  Pensamiento Computacional","[ TIC ]  Robótica","[ TIC ]  Competencia digital","[ EVALUACIÓN ]  Evaluación","[ EVALUACIÓN ]  Feedback","[ INVESTIGACIÓN ]  Meta-análisis","[ INVESTIGACIÓN ]  Revisión Sistemática","[ INVESTIGACIÓN ]  Teoría Fundamentada","[ NIVEL ]  Bachillerato","[ NIVEL ]  Infantil","[ NIVEL ]  Primaria","[ NIVEL ]  Secundaria","[ NIVEL ]  Superior","#Gap","#Seed"].sort();
 
-        // 🚀 API CONFIGURATION (MODO HÍBRIDO) 🚀
-        // Usamos la dirección real de Vercel para que funcione tanto en la web como en local (file://)
+        // 🚀 API CONFIGURATION 🚀
         const BASE_URL = "https://research-scraper-mu.vercel.app"; 
         const PROXY_ENDPOINT = `${BASE_URL}/api/proxy`;
         const AI_ENDPOINT = `${BASE_URL}/api/ai`;
@@ -159,6 +154,15 @@
         marked.setOptions({ gfm: true, breaks: true });
         const ViewMode = { EDIT: 'EDIT', PREVIEW: 'PREVIEW', SPLIT: 'SPLIT' };
         const getCurrentDate = () => new Date().toISOString().split('T')[0];
+        
+        // --- HELPER PARA BAJAR NIVEL DE ENCABEZADOS ---
+        // Esto asegura que los H1 del documento importado/scrapeado se conviertan en H2, etc.
+        const demoteHeadings = (text) => {
+            if (!text) return '';
+            // Regex: Busca líneas que empiecen por uno o más # y les añade uno extra
+            return text.replace(/^(#+)(?=\s)/gm, '#$1');
+        };
+
         const generateApa = (fm) => {
             if (!fm) return '';
             const cleanAuthor = (fm.author || 'Unknown').trim();
@@ -173,6 +177,7 @@
             } catch (e) {}
             return `${cleanAuthor} (${year}). *${cleanTitle}*. ${siteName}${fm.source}`;
         };
+
         const stringifyFrontmatter = (fm) => {
             const tagsString = fm.tags && fm.tags.length ? fm.tags.map(t => `  - ${t}`).join('\n') : '';
             return `---
@@ -186,12 +191,14 @@ tags:
 ${tagsString}
 ---`;
         };
+
         const generateFilename = (fm) => {
             const cleanAuthor = (fm.author || 'Unknown').trim();
             const year = fm.date ? fm.date.split('-')[0] : 'nd';
             const cleanTitle = (fm.title || 'Untitled').replace(/[^\w\s\u00C0-\u017F-]/g, '').trim();
             return `${cleanAuthor}. (${year}). ${cleanTitle}.md`;
         };
+
         const parseYamlFromText = (text) => {
             const match = text.match(/^---\n([\s\S]*?)\n---/);
             if (!match) return null;
@@ -617,6 +624,65 @@ ${tagsString}
                 }
             };
 
+            const importMarkdown = async (file) => {
+                if (!file) return;
+                try {
+                    const text = await file.text();
+                    
+                    // 1. Extraer o Crear YAML
+                    let newFm = parseYamlFromText(text);
+                    let body = text;
+                    
+                    if (!newFm) {
+                        newFm = {
+                            title: file.name.replace('.md', ''),
+                            author: 'Unknown',
+                            date: getCurrentDate(),
+                            created: getCurrentDate(),
+                            source: file.name,
+                            source_type: 'file.md',
+                            tags: []
+                        };
+                    } else {
+                        newFm.title = newFm.title || file.name.replace('.md', '');
+                        newFm.author = newFm.author || 'Unknown';
+                        newFm.date = newFm.date || getCurrentDate();
+                        newFm.created = newFm.created || getCurrentDate();
+                        newFm.source = newFm.source || file.name;
+                        newFm.source_type = 'file.md'; 
+                        newFm.tags = newFm.tags || [];
+                        
+                        body = text.replace(/^---\n[\s\S]*?\n---\n/, '').trim();
+                    }
+
+                    // 2. Normalizar Estructura y Jerarquía
+                    let structuredBody = body;
+                    const hasContenido = body.includes('# CONTENIDO');
+                    const hasApa = body.includes('# CITA APA');
+
+                    if (!hasContenido) {
+                        // IMPORTANTE: Si es un archivo externo sin estructura, bajamos sus encabezados
+                        // para que no compitan con los encabezados principales del sistema (H1)
+                        const safeBody = demoteHeadings(body);
+                        structuredBody = `# RESUMEN\n\n\n\n# CONTENIDO\n\n${safeBody}\n\n# NOTAS\n\n\n\n# CITA APA\n\n> ${generateApa(newFm)}`;
+                    } else {
+                        if (!hasApa) {
+                            structuredBody += `\n\n# CITA APA\n\n> ${generateApa(newFm)}`;
+                        }
+                    }
+
+                    const finalDoc = `${stringifyFrontmatter(newFm)}\n\n${structuredBody.replace(/^---\n[\s\S]*?\n---\n/, '').trim()}`;
+                    
+                    setFm(newFm);
+                    setFinal(finalDoc);
+                    setSt('success');
+                    if(window.innerWidth<768) setView(ViewMode.PREVIEW);
+
+                } catch (e) {
+                    alert("Error al importar el archivo: " + e.message);
+                }
+            };
+
             const process = async (type, input) => {
                 setSt('scraping'); setMsg('Processing...');
                 try {
@@ -633,7 +699,11 @@ ${tagsString}
                         meta = analyzeContent(text, input.name, 'pdf', pdf.metadata);
                     }
                     setFm(meta.fm); setSDates(meta.sDates);
-                    const content = `${stringifyFrontmatter(meta.fm)}\n\n# RESUMEN\n\n\n\n# CONTENIDO\n\n${text}\n\n# NOTAS\n\n\n\n# CITA APA\n\n> ${meta.citation}`;
+                    
+                    // IMPORTANTE: Bajamos los encabezados del contenido extraído automáticamente
+                    const safeText = demoteHeadings(text);
+                    
+                    const content = `${stringifyFrontmatter(meta.fm)}\n\n# RESUMEN\n\n\n\n# CONTENIDO\n\n${safeText}\n\n# NOTAS\n\n\n\n# CITA APA\n\n> ${meta.citation}`;
                     setFinal(content);
                     setSt('success');
                     if(window.innerWidth<768) setView(ViewMode.PREVIEW);
@@ -647,7 +717,7 @@ ${tagsString}
                 return (
                     <div className="space-y-8 pb-20">
                         <div className="bg-slate-800 rounded-xl p-6 border border-slate-700 shadow-lg relative overflow-hidden">
-                            <div className="absolute top-0 right-0 p-4 opacity-10"><i className={`fas ${fm.source_type==='pdf'?'fa-file-pdf':'fa-globe'} text-6xl`}></i></div>
+                            <div className="absolute top-0 right-0 p-4 opacity-10"><i className={`fas ${fm.source_type==='pdf'?'fa-file-pdf':fm.source_type==='file.md'?'fa-file-alt':'fa-globe'} text-6xl`}></i></div>
                             <h1 className="text-2xl font-bold text-white mb-2 relative z-10 !border-none !pb-0 !mb-2 !mt-0">{fm.title}</h1>
                             <div className="flex flex-wrap gap-4 text-sm text-gray-400 mb-4 relative z-10">
                                 <div className="flex items-center gap-2"><i className="fas fa-user"></i> {fm.author}</div>
@@ -676,22 +746,39 @@ ${tagsString}
                     <main className="flex-1 flex flex-col overflow-hidden max-w-[1600px] mx-auto w-full relative">
                         {st !== 'success' ? (
                             <div className="flex-1 overflow-y-auto p-4 flex items-center justify-center">
-                                <div className="w-full max-w-2xl bg-slate-800 rounded-2xl shadow-2xl p-6 md:p-8 border border-slate-700 my-4">
-                                    <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-center text-white">Extract Content</h2>
-                                    <div className="space-y-4 md:space-y-6">
-                                        <form onSubmit={e=>{e.preventDefault();process('url',e.target.elements.url.value)}} className="flex flex-col sm:flex-row gap-2">
-                                            <input name="url" type="url" placeholder="Paste article URL..." className="flex-1 p-3 md:p-4 rounded-xl bg-slate-900 border border-slate-600 focus:border-blue-500 outline-none transition text-white" required />
-                                            <button disabled={st==='scraping'} className="px-6 py-3 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-800 rounded-xl font-bold transition shadow-lg shadow-blue-600/20 text-white flex items-center justify-center gap-2 min-w-[120px]">
-                                                {st==='scraping' ? <><i className="fas fa-spinner fa-spin"></i> Processing...</> : <><i className="fas fa-search"></i> Scrape</>}
-                                            </button>
-                                        </form>
-                                        <div className="relative flex py-2 items-center"><div className="flex-grow border-t border-slate-600"></div><span className="flex-shrink-0 mx-4 text-slate-400 text-sm">OR</span><div className="flex-grow border-t border-slate-600"></div></div>
-                                        <div className="relative border-2 border-dashed border-slate-600 rounded-xl p-6 md:p-8 text-center hover:bg-slate-700/50 transition group cursor-pointer">
-                                            <input type="file" accept=".pdf" onChange={e=>e.target.files[0]&&process('pdf',e.target.files[0])} className="absolute inset-0 opacity-0 cursor-pointer" />
-                                            <i className="fas fa-file-pdf text-4xl text-slate-500 group-hover:text-red-400 mb-3 transition"></i>
-                                            <p className="text-slate-300 font-medium">Drop PDF here or click to upload</p>
+                                <div className="w-full max-w-2xl space-y-6 my-4">
+                                    
+                                    {/* SECTION 1: EXTRACT */}
+                                    <div className="bg-slate-800 rounded-2xl shadow-2xl p-6 md:p-8 border border-slate-700">
+                                        <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-center text-white">Extract Content</h2>
+                                        <div className="space-y-4 md:space-y-6">
+                                            <form onSubmit={e=>{e.preventDefault();process('url',e.target.elements.url.value)}} className="flex flex-col sm:flex-row gap-2">
+                                                <input name="url" type="url" placeholder="Paste article URL..." className="flex-1 p-3 md:p-4 rounded-xl bg-slate-900 border border-slate-600 focus:border-blue-500 outline-none transition text-white" required />
+                                                <button disabled={st==='scraping'} className="px-6 py-3 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-800 rounded-xl font-bold transition shadow-lg shadow-blue-600/20 text-white flex items-center justify-center gap-2 min-w-[120px]">
+                                                    {st==='scraping' ? <><i className="fas fa-spinner fa-spin"></i> Processing...</> : <><i className="fas fa-search"></i> Scrape</>}
+                                                </button>
+                                            </form>
+                                            <div className="relative flex py-2 items-center"><div className="flex-grow border-t border-slate-600"></div><span className="flex-shrink-0 mx-4 text-slate-400 text-sm">OR</span><div className="flex-grow border-t border-slate-600"></div></div>
+                                            <div className="relative border-2 border-dashed border-slate-600 rounded-xl p-6 md:p-8 text-center hover:bg-slate-700/50 transition group cursor-pointer">
+                                                <input type="file" accept=".pdf" onChange={e=>e.target.files[0]&&process('pdf',e.target.files[0])} className="absolute inset-0 opacity-0 cursor-pointer" />
+                                                <i className="fas fa-file-pdf text-4xl text-slate-500 group-hover:text-red-400 mb-3 transition"></i>
+                                                <p className="text-slate-300 font-medium">Drop PDF here or click to upload</p>
+                                            </div>
                                         </div>
                                     </div>
+
+                                    {/* SECTION 2: IMPORT (NUEVA SECCIÓN) */}
+                                    <div className="bg-slate-800 rounded-2xl shadow-2xl p-6 md:p-8 border border-slate-700">
+                                        <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-center text-white">Import Content</h2>
+                                        <div className="relative border-2 border-dashed border-blue-500/30 rounded-xl p-6 text-center hover:bg-blue-900/10 transition group cursor-pointer">
+                                            <input type="file" accept=".md,.txt" onChange={e=>e.target.files[0]&&importMarkdown(e.target.files[0])} className="absolute inset-0 opacity-0 cursor-pointer" />
+                                            <button className="px-6 py-3 bg-blue-600 hover:bg-blue-500 rounded-xl font-bold transition shadow-lg text-white flex items-center justify-center gap-2 mx-auto pointer-events-none">
+                                                <i className="fas fa-file-import"></i> Import Markdown File
+                                            </button>
+                                            <p className="text-slate-400 text-sm mt-3">Load existing .md files to edit or analyze with AI</p>
+                                        </div>
+                                    </div>
+
                                     {st === 'error' && <div className="mt-6 text-center text-red-400 bg-red-900/20 p-3 rounded-lg border border-red-900">{msg}</div>}
                                 </div>
                             </div>
