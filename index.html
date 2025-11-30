@@ -4,12 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Research Scraper AI</title>
-    <!-- FAVICON: Icono de libro en SVG data URI -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>">
+    
+    <!-- FAVICON MEJORADO: Icono de libro sobre fondo redondeado con gradiente -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%233b82f6;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%239333ea;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='5' y='5' width='90' height='90' rx='25' fill='url(%23grad)' stroke='%23ffffff' stroke-width='4'/%3E%3Ctext x='50' y='65' font-size='50' text-anchor='middle' fill='white'%3E📖%3C/text%3E%3C/svg%3E">
 
     <!-- Styles & Icons -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FIX: Cargamos el plugin de tipografía directamente desde el CDN para evitar 'require is not defined' -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
     <script>
       tailwind.config = {
         darkMode: 'class',
@@ -21,20 +24,54 @@
                 css: {
                   color: theme('colors.gray.300'),
                   a: { color: theme('colors.blue.400'), '&:hover': { color: theme('colors.blue.300') } },
-                  h1: { color: theme('colors.blue.400'), marginTop: '1.5em', marginBottom: '1em', paddingBottom: '0.5em', borderBottom: '1px solid', borderColor: theme('colors.blue.800'), lineHeight: '1.3' },
-                  h2: { color: theme('colors.blue.300'), marginTop: '2em', marginBottom: '1em', lineHeight: '1.3' },
-                  h3: { color: theme('colors.blue.200'), marginTop: '1.5em', marginBottom: '0.75em' },
-                  strong: { color: theme('colors.gray.100') },
-                  blockquote: { borderLeftColor: theme('colors.blue.500'), backgroundColor: 'rgba(59, 130, 246, 0.1)', padding: '1rem', fontStyle: 'italic', marginTop: '1.5em', marginBottom: '1.5em' },
+                  
+                  // --- ESTILOS DE TÍTULO TIPO WORD ---
+                  h1: {
+                      color: '#60a5fa', // Azul claro vibrante
+                      marginTop: '2em', // Mucho espacio antes
+                      marginBottom: '1em', // Espacio después
+                      paddingBottom: '0.5em',
+                      borderBottom: '2px solid #1e3a8a', // Línea sólida debajo
+                      fontWeight: '800',
+                      lineHeight: '1.2'
+                  },
+                  h2: {
+                      color: '#a78bfa', // Morado claro
+                      marginTop: '1.8em',
+                      marginBottom: '0.8em',
+                      fontWeight: '700',
+                      lineHeight: '1.3'
+                  },
+                  h3: {
+                      color: '#38bdf8', // Cyan
+                      marginTop: '1.5em',
+                      marginBottom: '0.6em',
+                      fontWeight: '600'
+                  },
+                  h4: { color: theme('colors.gray.100'), marginTop: '1.2em' },
+                  
+                  // Otros elementos
+                  strong: { color: theme('colors.white') },
+                  blockquote: { 
+                      borderLeftColor: theme('colors.blue.500'), 
+                      backgroundColor: 'rgba(59, 130, 246, 0.1)', 
+                      padding: '1rem', 
+                      fontStyle: 'italic', 
+                      marginTop: '1.5em', 
+                      marginBottom: '1.5em',
+                      borderRadius: '0.5rem'
+                  },
                   code: { color: theme('colors.pink.300') },
                   'code::before': { content: '""' }, 'code::after': { content: '""' },
-                  hr: { borderColor: theme('colors.gray.700'), marginTop: '2em', marginBottom: '2em' },
+                  hr: { borderColor: theme('colors.gray.700'), marginTop: '2.5em', marginBottom: '2.5em' },
+                  p: { marginTop: '1.2em', marginBottom: '1.2em', lineHeight: '1.8' }, // Más aire en los párrafos
+                  li: { marginTop: '0.5em', marginBottom: '0.5em' },
                 }
               }
             })
           }
-        },
-        plugins: [ function({ addBase, theme }) { addBase({ 'h1': { fontSize: theme('fontSize.3xl'), fontWeight: theme('fontWeight.bold') }, 'h2': { fontSize: theme('fontSize.2xl'), fontWeight: theme('fontWeight.bold') }, 'h3': { fontSize: theme('fontSize.xl'), fontWeight: theme('fontWeight.semibold') }, }) } ]
+        }
+        // FIX: Eliminada la llamada a 'plugins: [ require(...) ]' ya que se carga por URL
       }
     </script>
     <style>
@@ -46,6 +83,9 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         body { display: block; background-color: #0f172a; }
         html, body { height: 100%; overflow: hidden; }
+        
+        /* Ajuste para que el scroll funcione suave */
+        textarea { scroll-behavior: smooth; }
     </style>
     <!-- Libraries -->
     <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
@@ -68,6 +108,7 @@
         const AVAILABLE_TAGS = ["[ PROCESOS ]  Atención","[ PROCESOS ]  Autonomía","[ PROCESOS ]  Carga cognitiva","[ PROCESOS ]  Ciencias del Aprendizaje","[ PROCESOS ]  Creatividad","[ PROCESOS ]  Desarrollo cognitivo","[ PROCESOS ]  Estilos de aprendizaje","[ PROCESOS ]  Funciones ejecutivas","[ PROCESOS ]  Memoria","[ PROCESOS ]  Metacognición","[ PROCESOS ]  Motivación","[ PROCESOS ]  Neuroeducación","[ PROCESOS ]  Pensamiento Crítico","[ PROCESOS ]  Psicología","[ PROCESOS ]  Salud Mental","[ METODOLOGÍAS ]  Aprendizaje Basado en Proyectos","[ METODOLOGÍAS ]  Aula del Futuro","[ METODOLOGÍAS ]  Biblioteca","[ METODOLOGÍAS ]  Aprendizaje cooperativo","[ METODOLOGÍAS ]  Aprendizaje Servicio","[ METODOLOGÍAS ]  Flipped Classroom","[ METODOLOGÍAS ]  Gamificación","[ DIDÁCTICA ]  Competencias clave","[ DIDÁCTICA ]  Idiomas","[ DIDÁCTICA ]  Ciencias","[ DIDÁCTICA ]  Matemáticas","[ DIDÁCTICA ]  Artística","[ DIDÁCTICA ]  Sociales","[ DIDÁCTICA ]  Salud","[ DIDÁCTICA ]  Escritura","[ DIDÁCTICA ]  Lectura","[ DIDÁCTICA ]  Lenguaje oral","[ DIVERSIDAD ]  Adaptaciones curriculares","[ DIVERSIDAD ]  Altas Capacidades","[ DIVERSIDAD ]  Autismo","[ DIVERSIDAD ]  Dislexia","[ DIVERSIDAD ]  DUA","[ DIVERSIDAD ]  Educación Inclusiva","[ DIVERSIDAD ]  Necesidades Educativas Especiales","[ DIVERSIDAD ]  TDAH","[ GESTIÓN ]  Absentismo escolar","[ GESTIÓN ]  Bienestar docente","[ GESTIÓN ]  Currículo","[ GESTIÓN ]  Formación del profesorado","[ GESTIÓN ]  Gestión del aula","[ GESTIÓN ]  Liderazgo educativo","[ GESTIÓN ]  Orientación educativa","[ GESTIÓN ]  Política Educativa","[ GESTIÓN ]  Rendimiento académico","[ GESTIÓN ]  Tutoría","[ CONVIVENCIA ]  Acoso escolar","[ CONVIVENCIA ]  Clima de aula","[ CONVIVENCIA ]  Coeducación","[ CONVIVENCIA ]  Desigualdad educativa","[ CONVIVENCIA ]  Educación Emocional","[ CONVIVENCIA ]  Ética","[ CONVIVENCIA ]  Familia-Escuela","[ CONVIVENCIA ]  Resolución de conflictos","[ TIC ]  Inteligencia Artificial","[ TIC ]  Pensamiento Computacional","[ TIC ]  Robótica","[ TIC ]  Competencia digital","[ EVALUACIÓN ]  Evaluación","[ EVALUACIÓN ]  Feedback","[ INVESTIGACIÓN ]  Meta-análisis","[ INVESTIGACIÓN ]  Revisión Sistemática","[ INVESTIGACIÓN ]  Teoría Fundamentada","[ NIVEL ]  Bachillerato","[ NIVEL ]  Infantil","[ NIVEL ]  Primaria","[ NIVEL ]  Secundaria","[ NIVEL ]  Superior","#Gap","#Seed"].sort();
 
         // 🚀 API CONFIGURATION (MODO HÍBRIDO) 🚀
+        // Usamos la dirección real de Vercel para que funcione tanto en la web como en local (file://)
         const BASE_URL = "https://research-scraper-mu.vercel.app"; 
         const PROXY_ENDPOINT = `${BASE_URL}/api/proxy`;
         const AI_ENDPOINT = `${BASE_URL}/api/ai`;
@@ -388,7 +429,41 @@ ${tagsString}
             );
         };
 
-        // --- NEW: AI SELECTION MODAL ---
+        // --- NEW: TOC MODAL (NAVEGADOR DE TÍTULOS) ---
+        const TOCModal = ({ isOpen, onClose, markdown, onJump }) => {
+            if(!isOpen) return null;
+            
+            // Extraer encabezados con Regex: Captura #, ##, etc. y el texto
+            const headers = [];
+            const regex = /^(#{1,6})\s+(.*)$/gm;
+            let match;
+            while ((match = regex.exec(markdown)) !== null) {
+                headers.push({ level: match[1].length, text: match[2], index: match.index });
+            }
+
+            return (
+                <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in">
+                    <div className="bg-slate-800 rounded-2xl w-full max-w-sm border border-slate-700 shadow-2xl flex flex-col max-h-[70vh]">
+                        <div className="p-4 border-b border-slate-700 flex justify-between items-center bg-slate-900/50 rounded-t-2xl">
+                            <h3 className="font-bold text-white flex items-center gap-2"><i className="fas fa-list-ul text-blue-400"></i> Estructura</h3>
+                            <button onClick={onClose} className="w-8 h-8 rounded-full bg-slate-700 hover:bg-slate-600 flex items-center justify-center text-gray-300 transition"><i className="fas fa-times"></i></button>
+                        </div>
+                        <div className="overflow-y-auto p-2 space-y-1">
+                            {headers.length === 0 ? <p className="text-center text-gray-500 p-4">No se encontraron títulos.</p> : 
+                            headers.map((h, i) => (
+                                <button key={i} onClick={() => onJump(h.index)} 
+                                    className={`w-full text-left p-3 rounded-lg hover:bg-slate-700 text-gray-300 hover:text-white transition text-sm flex items-center gap-2 ${h.level===1?'font-bold bg-slate-700/30 text-blue-200':''}`}
+                                    style={{ paddingLeft: `${(h.level-1)*1.5 + 0.75}rem` }}>
+                                    <span className="text-xs text-slate-500">{Array(h.level).fill('#').join('')}</span>
+                                    <span className="truncate">{h.text}</span>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
         const AISelectionModal = ({ isOpen, onClose, onSelect, loading }) => {
             if(!isOpen) return null;
             
@@ -398,21 +473,21 @@ ${tagsString}
                     name: 'Google Gemini 2.0', 
                     desc: 'Rápido, creativo y gran contexto.', 
                     color: 'from-blue-600 to-blue-400', 
-                    path: 'M24 4.5a19.5 19.5 0 1 0 19.5 19.5A19.5 19.5 0 0 0 24 4.5zm8.9 22.8a12.6 12.6 0 0 1-12.2 0 12.6 12.6 0 0 1 0-12.2 12.6 12.6 0 0 1 12.2 0 12.6 12.6 0 0 1 0 12.2z' // Abstract shape for Google
+                    path: 'M24 4.5a19.5 19.5 0 1 0 19.5 19.5A19.5 19.5 0 0 0 24 4.5zm8.9 22.8a12.6 12.6 0 0 1-12.2 0 12.6 12.6 0 0 1 0-12.2 12.6 12.6 0 0 1 12.2 0 12.6 12.6 0 0 1 0 12.2z'
                 },
                 { 
                     id: 'groq', 
                     name: 'Groq Llama 3.3', 
                     desc: 'Súper rápido y objetivo.', 
                     color: 'from-orange-600 to-orange-400', 
-                    path: 'M28 2L14 26h10l-4 20 14-24H24z' // Lightning bolt
+                    path: 'M28 2L14 26h10l-4 20 14-24H24z'
                 },
                 { 
                     id: 'cohere', 
                     name: 'Cohere Command R+', 
                     desc: 'Especialista en resúmenes empresariales.', 
                     color: 'from-teal-600 to-teal-400', 
-                    path: 'M8 12a4 4 0 0 1 4-4h24a4 4 0 0 1 4 4v20a4 4 0 0 1-4 4H12a4 4 0 0 1-4-4V12zm12 6h16M20 22h8' // Briefcase-ish
+                    path: 'M8 12a4 4 0 0 1 4-4h24a4 4 0 0 1 4 4v20a4 4 0 0 1-4 4H12a4 4 0 0 1-4-4V12zm12 6h16M20 22h8'
                 }
             ];
 
@@ -460,9 +535,11 @@ ${tagsString}
             const [currentPdf, setCurrentPdf] = useState(null);
             const [sDates, setSDates] = useState([]);
             const [view, setView] = useState(window.innerWidth<768?ViewMode.PREVIEW:ViewMode.SPLIT);
-            const [modals, setModals] = useState({meta:false, imgs:false, ai:false});
+            const [modals, setModals] = useState({meta:false, imgs:false, ai:false, toc:false});
             const [copied, setCopied] = useState(false);
             const [aiLoading, setAiLoading] = useState(false);
+            
+            const textareaRef = useRef(null); // Ref para el editor
 
             const handleEditorChange = (e) => {
                 const newVal = e.target.value;
@@ -527,6 +604,17 @@ ${tagsString}
                 const name = generateFilename(fm).replace('.md', '.pdf');
                 const url = URL.createObjectURL(currentPdf);
                 const a = document.createElement('a'); a.href = url; a.download = name; a.click(); URL.revokeObjectURL(url);
+            };
+
+            const jumpToHeader = (index) => {
+                setModals({...modals, toc: false});
+                if(textareaRef.current) {
+                    textareaRef.current.focus();
+                    textareaRef.current.setSelectionRange(index, index);
+                    // Truco para hacer scroll al cursor: blur y focus
+                    textareaRef.current.blur();
+                    textareaRef.current.focus();
+                }
             };
 
             const process = async (type, input) => {
@@ -614,7 +702,7 @@ ${tagsString}
                                         <button onClick={()=>setModals({...modals,meta:true})} className="btn px-3 py-1.5 bg-indigo-900/50 text-indigo-300 rounded hover:bg-indigo-900 border border-indigo-900/50 text-sm"><i className="fas fa-tags mr-1"></i> Metadata</button>
                                         <button onClick={()=>setModals({...modals,imgs:true})} className="btn px-3 py-1.5 bg-purple-900/50 text-purple-300 rounded hover:bg-purple-900 border border-purple-900/50 text-sm"><i className="fas fa-images mr-1"></i> Images</button>
                                         
-                                        {/* BOTÓN MÁGICO QUE ABRE EL MENÚ */}
+                                        {/* BOTÓN MÁGICO */}
                                         <button 
                                             onClick={() => setModals({...modals, ai: true})} 
                                             disabled={aiLoading}
@@ -624,6 +712,10 @@ ${tagsString}
                                         </button>
 
                                         <button onClick={()=>{setSt('idle');setFm(null)}} className="btn px-3 py-1.5 bg-slate-700 text-gray-300 rounded hover:bg-slate-600 border border-slate-600 text-sm"><i className="fas fa-redo mr-1"></i> New</button>
+                                        
+                                        {/* NUEVO: BOTÓN DE ESTRUCTURA (TOC) */}
+                                        <button onClick={()=>setModals({...modals, toc: true})} className="btn px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-gray-300 rounded text-sm border border-slate-600" title="Ver estructura del documento"><i className="fas fa-list-ul"></i></button>
+
                                         <div className="flex-grow hidden sm:block"></div>
                                         {currentPdf && <button onClick={downloadRenamedPdf} className="px-3 py-1.5 bg-red-900/50 hover:bg-red-900 text-red-200 rounded text-sm font-bold border border-red-800"><i className="fas fa-file-pdf mr-1"></i> PDF</button>}
                                         <button onClick={()=>{navigator.clipboard.writeText(generateApa(fm));setCopied(true);setTimeout(()=>setCopied(false),2000)}} className={`px-3 py-1.5 rounded text-sm font-bold transition flex items-center ${copied?'bg-green-600 text-white':'bg-yellow-900/50 text-yellow-200 hover:bg-yellow-900 border border-yellow-900'}`}><i className="fas fa-quote-right mr-1"></i> {copied?'Copied!':'APA'}</button>
@@ -636,7 +728,15 @@ ${tagsString}
                                     </div>
                                 </div>
                                 <div className="flex-1 flex overflow-hidden relative">
-                                    <div className={`${view===ViewMode.PREVIEW?'hidden':'flex-1'} h-full bg-slate-900 border-r border-slate-800`}><textarea value={final} onChange={handleEditorChange} className="w-full h-full bg-slate-900 text-gray-300 p-4 md:p-6 outline-none resize-none font-mono text-sm leading-relaxed" spellCheck="false" /></div>
+                                    <div className={`${view===ViewMode.PREVIEW?'hidden':'flex-1'} h-full bg-slate-900 border-r border-slate-800`}>
+                                        <textarea 
+                                            ref={textareaRef}
+                                            value={final} 
+                                            onChange={handleEditorChange} 
+                                            className="w-full h-full bg-slate-900 text-gray-300 p-4 md:p-6 outline-none resize-none font-mono text-sm leading-relaxed" 
+                                            spellCheck="false" 
+                                        />
+                                    </div>
                                     <div className={`${view===ViewMode.EDIT?'hidden':'flex-1'} h-full bg-slate-850 overflow-y-auto p-4 md:p-8`}>{renderPreview()}</div>
                                 </div>
                             </div>
@@ -645,6 +745,7 @@ ${tagsString}
                     {fm && <MetadataModal isOpen={modals.meta} onClose={()=>setModals({...modals,meta:false})} fm={fm} onSave={handleMetadataSave} sDates={sDates} />}
                     {fm && <ImageManager isOpen={modals.imgs} onClose={()=>setModals({...modals,imgs:false})} md={final} name={generateFilename(fm).replace('.md','')} />}
                     {fm && <AISelectionModal isOpen={modals.ai} onClose={()=>setModals({...modals,ai:false})} onSelect={executeAI} loading={aiLoading} />}
+                    {fm && <TOCModal isOpen={modals.toc} onClose={()=>setModals({...modals,toc:false})} markdown={final} onJump={jumpToHeader} />}
                 </div>
             );
         };
