@@ -13,7 +13,6 @@ export default async function handler(req, res) {
   const keys = {
     google: process.env.GEMINI_API_KEY,
     groq: process.env.GROQ_API_KEY,
-    sambanova: process.env.SAMBANOVA_API_KEY,
     cohere: process.env.COHERE_API_KEY
   };
 
@@ -23,12 +22,12 @@ export default async function handler(req, res) {
 
     if (preferredProvider === 'google' && keys.google) result = await callGoogle(keys.google, text);
     else if (preferredProvider === 'groq' && keys.groq) result = await callGroq(keys.groq, text);
-    else if (preferredProvider === 'sambanova' && keys.sambanova) result = await callSambaNova(keys.sambanova, text);
     else if (preferredProvider === 'cohere' && keys.cohere) result = await callCohere(keys.cohere, text);
     else {
         // Fallback automático
         if (keys.google) result = await callGoogle(keys.google, text);
         else if (keys.groq) result = await callGroq(keys.groq, text);
+        else if (keys.cohere) result = await callCohere(keys.cohere, text);
         else throw new Error("No hay proveedores configurados.");
     }
 
@@ -45,13 +44,11 @@ function cleanAndParseJSON(rawText) {
     if (!rawText) throw new Error("Respuesta vacía.");
     try { return JSON.parse(rawText); } catch (e) {}
     
-    // Intentar extraer bloque JSON
     const first = rawText.indexOf('{');
     const last = rawText.lastIndexOf('}');
     if (first !== -1 && last !== -1) {
         try { return JSON.parse(rawText.substring(first, last + 1)); } catch (e) {}
     }
-    // Fallback: limpieza agresiva de caracteres de control
     try { return JSON.parse(rawText.replace(/[\n\r\t]/g, ' ')); } catch (e) {}
     
     throw new Error(`No se pudo leer el JSON: ${rawText.substring(0, 50)}...`);
@@ -94,29 +91,13 @@ async function callGroq(key, text) {
   return JSON.parse(data.choices[0].message.content);
 }
 
-// 3. SAMBANOVA (CORREGIDO: Usamos 70B que es estable en free tier)
-async function callSambaNova(key, text) {
-  const res = await fetch('https://api.sambanova.ai/v1/chat/completions', {
-    method: 'POST',
-    headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: "Meta-Llama-3.1-70B-Instruct", // CAMBIO A MODELO ESTABLE
-      messages: [{ role: "user", content: `Analiza el texto. Responde ÚNICAMENTE con JSON válido: { "summary": "Resumen español", "keyPoints": "Markdown list", "suggestedTags": ["tag"] }. TEXTO: ${text.substring(0, 10000)}` }],
-      temperature: 0.1
-    })
-  });
-  if (!res.ok) throw new Error(`SambaNova: ${await res.text()}`);
-  const data = await res.json();
-  return cleanAndParseJSON(data.choices[0].message.content);
-}
-
-// 4. COHERE (CORREGIDO: Versión específica)
+// 3. COHERE
 async function callCohere(key, text) {
   const res = await fetch('https://api.cohere.com/v1/chat', {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: "command-r-plus-08-2024", // CAMBIO A ID EXACTO
+      model: "command-r-plus-08-2024", 
       message: `Analiza y devuelve SOLO JSON puro: { "summary": "Español", "keyPoints": "Markdown", "suggestedTags": [] }. TEXTO: ${text.substring(0, 20000)}`
     })
   });
