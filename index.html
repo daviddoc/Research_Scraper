@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Research Scraper AI (Serverless)</title>
+    <title>Research Scraper AI (Multi-Model)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <script>
@@ -63,7 +63,6 @@
         const AVAILABLE_TAGS = ["Lectura", "escritura", "lenguaje oral", "aprendizaje cooperativo", "autonomía", "memoria", "carga cognitiva", "ABP", "Inteligencia Artificial"].sort();
 
         // 🚀 API CONFIGURATION 🚀
-        // La URL base detecta automáticamente si estás en Vercel
         const BASE_URL = window.location.origin; 
         const PROXY_ENDPOINT = `${BASE_URL}/api/proxy`;
         const AI_ENDPOINT = `${BASE_URL}/api/ai`;
@@ -95,11 +94,15 @@
         };
 
         // --- AI SERVICE (SERVER SIDE) ---
-        const callServerAI = async (text) => {
+        // Ahora acepta el proveedor seleccionado
+        const callServerAI = async (text, provider) => {
             const response = await fetch(AI_ENDPOINT, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text: text })
+                body: JSON.stringify({ 
+                    text: text,
+                    preferredProvider: provider 
+                })
             });
 
             if (!response.ok) {
@@ -397,6 +400,7 @@ ${tagsString}
             const [modals, setModals] = useState({meta:false, imgs:false});
             const [copied, setCopied] = useState(false);
             const [aiLoading, setAiLoading] = useState(false);
+            const [aiProvider, setAiProvider] = useState('google'); // Default provider
 
             const handleEditorChange = (e) => {
                 const newVal = e.target.value;
@@ -432,8 +436,8 @@ ${tagsString}
                 const bodyContent = parts.slice(2).join('---').replace(/# RESUMEN[\s\S]*?# CONTENIDO/, '# CONTENIDO').replace(/# CITA APA[\s\S]*$/, '');
                 setAiLoading(true);
                 try {
-                    // LLAMADA AL SERVIDOR VERCEL (api/ai.js)
-                    const result = await callServerAI(bodyContent);
+                    // LLAMADA AL SERVIDOR VERCEL CON EL PROVEEDOR ELEGIDO
+                    const result = await callServerAI(bodyContent, aiProvider);
                     
                     const uniqueTags = [...new Set([...(fm.tags || []), ...(result.suggestedTags || [])])];
                     const newFm = { ...fm, tags: uniqueTags };
@@ -448,9 +452,9 @@ ${tagsString}
                     const cleanContent = contentAndRest.replace(/# CITA APA[\s\S]*$/, '').trim();
                     const newDoc = `${newYaml}\n\n${summaryBlock}\n\n\n\n${contentMarker}\n\n${cleanContent}\n\n\n\n${apaBlock}`;
                     setFinal(newDoc);
-                    alert("¡Análisis IA completado desde el Servidor!");
+                    // SIN ALERT DE ÉXITO (Solo actualiza el contenido silenciosamente)
                 } catch (e) {
-                    alert("Error IA: " + e.message);
+                    alert(`Error con ${aiProvider}: ${e.message}\n\nPrueba a seleccionar otro proveedor en el menú.`);
                 }
                 setAiLoading(false);
             };
@@ -515,7 +519,7 @@ ${tagsString}
                     <nav className="bg-slate-900 border-b border-slate-800 p-3 flex justify-between items-center sticky top-0 z-30 shrink-0">
                         <div className="flex items-center gap-3">
                             <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded flex items-center justify-center shadow"><i className="fas fa-book-open text-white"></i></div>
-                            <h1 className="font-bold text-lg bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">ResearchScraper <span className="text-xs bg-slate-800 text-blue-300 px-1 py-0.5 rounded border border-blue-900 ml-1">AI Serverless</span></h1>
+                            <h1 className="font-bold text-lg bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">ResearchScraper <span className="text-xs bg-slate-800 text-blue-300 px-1 py-0.5 rounded border border-blue-900 ml-1">Multi-AI</span></h1>
                         </div>
                     </nav>
                     <main className="flex-1 flex flex-col overflow-hidden max-w-[1600px] mx-auto w-full relative">
@@ -547,10 +551,28 @@ ${tagsString}
                                         <button onClick={()=>setModals({...modals,meta:true})} className="btn px-3 py-1.5 bg-indigo-900/50 text-indigo-300 rounded hover:bg-indigo-900 border border-indigo-900/50 text-sm"><i className="fas fa-tags mr-1"></i> Metadata</button>
                                         <button onClick={()=>setModals({...modals,imgs:true})} className="btn px-3 py-1.5 bg-purple-900/50 text-purple-300 rounded hover:bg-purple-900 border border-purple-900/50 text-sm"><i className="fas fa-images mr-1"></i> Images</button>
                                         
-                                        {/* AI BUTTON (YA NO PIDE CLAVE) */}
-                                        <button onClick={runAI} disabled={aiLoading} className="btn px-3 py-1.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded hover:opacity-90 border border-blue-500 text-sm shadow-lg shadow-purple-500/20 font-bold">
-                                            {aiLoading ? <i className="fas fa-spinner fa-spin"></i> : <><i className="fas fa-magic mr-1"></i> AI Analyze</>}
-                                        </button>
+                                        {/* 🔽 SELECTOR DE IA MEJORADO 🔽 */}
+                                        <div className="flex items-center gap-1 bg-slate-700 rounded p-0.5 border border-slate-600">
+                                            <select 
+                                                value={aiProvider} 
+                                                onChange={(e) => setAiProvider(e.target.value)}
+                                                className="bg-transparent text-xs text-white p-1 outline-none font-bold cursor-pointer hover:text-blue-300"
+                                            >
+                                                <option value="google" className="bg-slate-800">Gemini 2.0 (Google)</option>
+                                                <option value="groq" className="bg-slate-800">Llama 3 (Groq)</option>
+                                                <option value="sambanova" className="bg-slate-800">Qwen 2.5 (China)</option>
+                                                <option value="cohere" className="bg-slate-800">Command R+ (Cohere)</option>
+                                            </select>
+                                            <button 
+                                                onClick={runAI} 
+                                                disabled={aiLoading} 
+                                                className="px-2 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded text-xs font-bold transition flex items-center gap-1"
+                                                title="Analizar con el proveedor seleccionado"
+                                            >
+                                                {aiLoading ? <i className="fas fa-spinner fa-spin"></i> : <i className="fas fa-magic"></i>}
+                                            </button>
+                                        </div>
+                                        {/* 🔼 FIN SELECTOR 🔼 */}
 
                                         <button onClick={()=>{setSt('idle');setFm(null)}} className="btn px-3 py-1.5 bg-slate-700 text-gray-300 rounded hover:bg-slate-600 border border-slate-600 text-sm"><i className="fas fa-redo mr-1"></i> New</button>
                                         <div className="flex-grow hidden sm:block"></div>
