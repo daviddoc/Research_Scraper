@@ -62,89 +62,15 @@
         const { useState, useEffect, useRef } = React;
 
         // CONFIG: TAGS
-        const AVAILABLE_TAGS = [
-            "[ PROCESOS ]  Atención",
-            "[ PROCESOS ]  Autonomía",
-            "[ PROCESOS ]  Carga cognitiva",
-            "[ PROCESOS ]  Ciencias del Aprendizaje",
-            "[ PROCESOS ]  Creatividad",
-            "[ PROCESOS ]  Desarrollo cognitivo",
-            "[ PROCESOS ]  Estilos de aprendizaje",
-            "[ PROCESOS ]  Funciones ejecutivas",
-            "[ PROCESOS ]  Memoria",
-            "[ PROCESOS ]  Metacognición",
-            "[ PROCESOS ]  Motivación",
-            "[ PROCESOS ]  Neuroeducación",
-            "[ PROCESOS ]  Pensamiento Crítico",
-            "[ PROCESOS ]  Psicología",
-            "[ PROCESOS ]  Salud Mental",
-            "[ METODOLOGÍAS ]  Aprendizaje Basado en Proyectos",
-            "[ METODOLOGÍAS ]  Aula del Futuro",
-            "[ METODOLOGÍAS ]  Biblioteca",
-            "[ METODOLOGÍAS ]  Aprendizaje cooperativo",
-            "[ METODOLOGÍAS ]  Aprendizaje Servicio",
-            "[ METODOLOGÍAS ]  Flipped Classroom",
-            "[ METODOLOGÍAS ]  Gamificación",
-            "[ DIDÁCTICA ]  Competencias clave",
-            "[ DIDÁCTICA ]  Idiomas",
-            "[ DIDÁCTICA ]  Ciencias",
-            "[ DIDÁCTICA ]  Matemáticas",
-            "[ DIDÁCTICA ]  Artística",
-            "[ DIDÁCTICA ]  Sociales",
-            "[ DIDÁCTICA ]  Salud",
-            "[ DIDÁCTICA ]  Escritura",
-            "[ DIDÁCTICA ]  Lectura",
-            "[ DIDÁCTICA ]  Lenguaje oral",
-            "[ DIVERSIDAD ]  Adaptaciones curriculares",
-            "[ DIVERSIDAD ]  Altas Capacidades",
-            "[ DIVERSIDAD ]  Autismo",
-            "[ DIVERSIDAD ]  Dislexia",
-            "[ DIVERSIDAD ]  DUA",
-            "[ DIVERSIDAD ]  Educación Inclusiva",
-            "[ DIVERSIDAD ]  Necesidades Educativas Especiales",
-            "[ DIVERSIDAD ]  TDAH",
-            "[ GESTIÓN ]  Absentismo escolar",
-            "[ GESTIÓN ]  Bienestar docente",
-            "[ GESTIÓN ]  Currículo",
-            "[ GESTIÓN ]  Formación del profesorado",
-            "[ GESTIÓN ]  Gestión del aula",
-            "[ GESTIÓN ]  Liderazgo educativo",
-            "[ GESTIÓN ]  Orientación educativa",
-            "[ GESTIÓN ]  Política Educativa",
-            "[ GESTIÓN ]  Rendimiento académico",
-            "[ GESTIÓN ]  Tutoría",
-            "[ CONVIVENCIA ]  Acoso escolar",
-            "[ CONVIVENCIA ]  Clima de aula",
-            "[ CONVIVENCIA ]  Coeducación",
-            "[ CONVIVENCIA ]  Desigualdad educativa",
-            "[ CONVIVENCIA ]  Educación Emocional",
-            "[ CONVIVENCIA ]  Ética",
-            "[ CONVIVENCIA ]  Familia-Escuela",
-            "[ CONVIVENCIA ]  Resolución de conflictos",
-            "[ TIC ]  Inteligencia Artificial",
-            "[ TIC ]  Pensamiento Computacional",
-            "[ TIC ]  Robótica",
-            "[ TIC ]  Competencia digital",
-            "[ EVALUACIÓN ]  Evaluación",
-            "[ EVALUACIÓN ]  Feedback",
-            "[ INVESTIGACIÓN ]  Meta-análisis",
-            "[ INVESTIGACIÓN ]  Revisión Sistemática",
-            "[ INVESTIGACIÓN ]  Teoría Fundamentada",
-            "[ NIVEL ]  Bachillerato",
-            "[ NIVEL ]  Infantil",
-            "[ NIVEL ]  Primaria",
-            "[ NIVEL ]  Secundaria",
-            "[ NIVEL ]  Superior",
-            "#Gap",
-            "#Seed"].sort();
+        const AVAILABLE_TAGS = ["[ PROCESOS ]  Atención","[ PROCESOS ]  Autonomía","[ PROCESOS ]  Carga cognitiva","[ PROCESOS ]  Ciencias del Aprendizaje","[ PROCESOS ]  Creatividad","[ PROCESOS ]  Desarrollo cognitivo","[ PROCESOS ]  Estilos de aprendizaje","[ PROCESOS ]  Funciones ejecutivas","[ PROCESOS ]  Memoria","[ PROCESOS ]  Metacognición","[ PROCESOS ]  Motivación","[ PROCESOS ]  Neuroeducación","[ PROCESOS ]  Pensamiento Crítico","[ PROCESOS ]  Psicología","[ PROCESOS ]  Salud Mental","[ METODOLOGÍAS ]  Aprendizaje Basado en Proyectos","[ METODOLOGÍAS ]  Aula del Futuro","[ METODOLOGÍAS ]  Biblioteca","[ METODOLOGÍAS ]  Aprendizaje cooperativo","[ METODOLOGÍAS ]  Aprendizaje Servicio","[ METODOLOGÍAS ]  Flipped Classroom","[ METODOLOGÍAS ]  Gamificación","[ DIDÁCTICA ]  Competencias clave","[ DIDÁCTICA ]  Idiomas","[ DIDÁCTICA ]  Ciencias","[ DIDÁCTICA ]  Matemáticas","[ DIDÁCTICA ]  Artística","[ DIDÁCTICA ]  Sociales","[ DIDÁCTICA ]  Salud","[ DIDÁCTICA ]  Escritura","[ DIDÁCTICA ]  Lectura","[ DIDÁCTICA ]  Lenguaje oral","[ DIVERSIDAD ]  Adaptaciones curriculares","[ DIVERSIDAD ]  Altas Capacidades","[ DIVERSIDAD ]  Autismo","[ DIVERSIDAD ]  Dislexia","[ DIVERSIDAD ]  DUA","[ DIVERSIDAD ]  Educación Inclusiva","[ DIVERSIDAD ]  Necesidades Educativas Especiales","[ DIVERSIDAD ]  TDAH","[ GESTIÓN ]  Absentismo escolar","[ GESTIÓN ]  Bienestar docente","[ GESTIÓN ]  Currículo","[ GESTIÓN ]  Formación del profesorado","[ GESTIÓN ]  Gestión del aula","[ GESTIÓN ]  Liderazgo educativo","[ GESTIÓN ]  Orientación educativa","[ GESTIÓN ]  Política Educativa","[ GESTIÓN ]  Rendimiento académico","[ GESTIÓN ]  Tutoría","[ CONVIVENCIA ]  Acoso escolar","[ CONVIVENCIA ]  Clima de aula","[ CONVIVENCIA ]  Coeducación","[ CONVIVENCIA ]  Desigualdad educativa","[ CONVIVENCIA ]  Educación Emocional","[ CONVIVENCIA ]  Ética","[ CONVIVENCIA ]  Familia-Escuela","[ CONVIVENCIA ]  Resolución de conflictos","[ TIC ]  Inteligencia Artificial","[ TIC ]  Pensamiento Computacional","[ TIC ]  Robótica","[ TIC ]  Competencia digital","[ EVALUACIÓN ]  Evaluación","[ EVALUACIÓN ]  Feedback","[ INVESTIGACIÓN ]  Meta-análisis","[ INVESTIGACIÓN ]  Revisión Sistemática","[ INVESTIGACIÓN ]  Teoría Fundamentada","[ NIVEL ]  Bachillerato","[ NIVEL ]  Infantil","[ NIVEL ]  Primaria","[ NIVEL ]  Secundaria","[ NIVEL ]  Superior","#Gap","#Seed"].sort();
 
-        // 🚀 API CONFIGURATION (MODO HÍBRIDO) 🚀
+        // 🚀 API CONFIGURATION 🚀
         // Usamos la dirección real de Vercel para que funcione tanto en la web como en local (file://)
         const BASE_URL = "https://research-scraper-mu.vercel.app"; 
         const PROXY_ENDPOINT = `${BASE_URL}/api/proxy`;
         const AI_ENDPOINT = `${BASE_URL}/api/ai`;
 
-        // --- SCRAPER SERVICE ---
+        // --- SERVICES ---
         const fetchWithCorsRotation = async (targetUrl, isJson = false) => {
             try {
                 const proxyUrl = `${PROXY_ENDPOINT}?url=${encodeURIComponent(targetUrl)}`;
@@ -170,18 +96,12 @@
             throw new Error("Image download failed");
         };
 
-        // --- AI SERVICE (SERVER SIDE) ---
-        // Ahora acepta el proveedor seleccionado
         const callServerAI = async (text, provider) => {
             const response = await fetch(AI_ENDPOINT, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    text: text,
-                    preferredProvider: provider 
-                })
+                body: JSON.stringify({ text: text, preferredProvider: provider })
             });
-
             if (!response.ok) {
                 const err = await response.json();
                 throw new Error(err.error || "Error en el servidor de IA");
@@ -413,6 +333,7 @@ ${tagsString}
                 </div>
             );
         };
+
         const ImageManager = ({ isOpen, onClose, md, name }) => {
             const [imgs, setImgs] = useState([]);
             const [proc, setProc] = useState(false);
@@ -465,6 +386,50 @@ ${tagsString}
             );
         };
 
+        // --- NEW: AI SELECTION MODAL ---
+        const AISelectionModal = ({ isOpen, onClose, onSelect, loading }) => {
+            if(!isOpen) return null;
+            
+            const models = [
+                { id: 'google', name: 'Google Gemini 2.0', desc: 'Rápido, creativo y gran contexto.', color: 'from-blue-600 to-blue-400', icon: 'fa-google' },
+                { id: 'groq', name: 'Groq Llama 3.3', desc: 'Súper rápido y objetivo.', color: 'from-orange-600 to-orange-400', icon: 'fa-bolt' },
+                { id: 'sambanova', name: 'Llama 3.1 405B', desc: 'El "cerebrito" open-source más potente.', color: 'from-purple-600 to-purple-400', icon: 'fa-brain' },
+                { id: 'cohere', name: 'Cohere Command R+', desc: 'Especialista en resúmenes empresariales.', color: 'from-teal-600 to-teal-400', icon: 'fa-briefcase' }
+            ];
+
+            return (
+                <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in">
+                    <div className="bg-slate-800 rounded-2xl w-full max-w-sm border border-slate-700 shadow-2xl overflow-hidden transform transition-all scale-100">
+                        <div className="p-4 border-b border-slate-700 flex justify-between items-center bg-slate-900/50">
+                            <h3 className="font-bold text-white flex items-center gap-2"><i className="fas fa-robot text-blue-400"></i> Elegir Cerebro IA</h3>
+                            <button onClick={onClose} className="w-8 h-8 rounded-full bg-slate-700 hover:bg-slate-600 flex items-center justify-center text-gray-300 transition"><i className="fas fa-times"></i></button>
+                        </div>
+                        <div className="p-4 space-y-3">
+                            {models.map(m => (
+                                <button key={m.id} onClick={() => onSelect(m.id)} disabled={loading} 
+                                    className="w-full text-left p-4 rounded-xl bg-slate-700/50 hover:bg-slate-700 border border-slate-600 hover:border-blue-500/50 transition group relative overflow-hidden">
+                                    <div className={`absolute inset-0 bg-gradient-to-r ${m.color} opacity-0 group-hover:opacity-10 transition duration-300`}></div>
+                                    <div className="flex items-center gap-4 relative z-10">
+                                        <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${m.color} flex items-center justify-center shadow-lg`}>
+                                            <i className={`fab ${m.icon === 'fa-bolt' ? 'fas' : ''} ${m.icon} text-white text-lg`}></i>
+                                        </div>
+                                        <div>
+                                            <h4 className="font-bold text-gray-100">{m.name}</h4>
+                                            <p className="text-xs text-gray-400 mt-0.5">{m.desc}</p>
+                                        </div>
+                                        <i className="fas fa-chevron-right ml-auto text-slate-500 group-hover:text-blue-400 transition"></i>
+                                    </div>
+                                </button>
+                            ))}
+                        </div>
+                        <div className="p-3 bg-slate-900/50 text-center border-t border-slate-700">
+                            <p className="text-xs text-gray-500">Todos los modelos son gratuitos</p>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
         // --- MAIN APP ---
         const App = () => {
             const [st, setSt] = useState('idle');
@@ -474,10 +439,9 @@ ${tagsString}
             const [currentPdf, setCurrentPdf] = useState(null);
             const [sDates, setSDates] = useState([]);
             const [view, setView] = useState(window.innerWidth<768?ViewMode.PREVIEW:ViewMode.SPLIT);
-            const [modals, setModals] = useState({meta:false, imgs:false});
+            const [modals, setModals] = useState({meta:false, imgs:false, ai:false});
             const [copied, setCopied] = useState(false);
             const [aiLoading, setAiLoading] = useState(false);
-            const [aiProvider, setAiProvider] = useState('google'); // Default provider
 
             const handleEditorChange = (e) => {
                 const newVal = e.target.value;
@@ -507,14 +471,16 @@ ${tagsString}
                 }
             };
 
-            const runAI = async () => {
+            const executeAI = async (providerId) => {
+                setModals({...modals, ai: false}); // Cerrar modal
+                
                 const parts = final.split('---');
                 if (parts.length < 3) return;
                 const bodyContent = parts.slice(2).join('---').replace(/# RESUMEN[\s\S]*?# CONTENIDO/, '# CONTENIDO').replace(/# CITA APA[\s\S]*$/, '');
+                
                 setAiLoading(true);
                 try {
-                    // LLAMADA AL SERVIDOR VERCEL CON EL PROVEEDOR ELEGIDO
-                    const result = await callServerAI(bodyContent, aiProvider);
+                    const result = await callServerAI(bodyContent, providerId);
                     
                     const uniqueTags = [...new Set([...(fm.tags || []), ...(result.suggestedTags || [])])];
                     const newFm = { ...fm, tags: uniqueTags };
@@ -529,9 +495,8 @@ ${tagsString}
                     const cleanContent = contentAndRest.replace(/# CITA APA[\s\S]*$/, '').trim();
                     const newDoc = `${newYaml}\n\n${summaryBlock}\n\n\n\n${contentMarker}\n\n${cleanContent}\n\n\n\n${apaBlock}`;
                     setFinal(newDoc);
-                    // SIN ALERT DE ÉXITO (Solo actualiza el contenido silenciosamente)
                 } catch (e) {
-                    alert(`Error con ${aiProvider}: ${e.message}\n\nPrueba a seleccionar otro proveedor en el menú.`);
+                    alert(`Error con el proveedor seleccionado: ${e.message}\n\nInténtalo de nuevo.`);
                 }
                 setAiLoading(false);
             };
@@ -628,28 +593,14 @@ ${tagsString}
                                         <button onClick={()=>setModals({...modals,meta:true})} className="btn px-3 py-1.5 bg-indigo-900/50 text-indigo-300 rounded hover:bg-indigo-900 border border-indigo-900/50 text-sm"><i className="fas fa-tags mr-1"></i> Metadata</button>
                                         <button onClick={()=>setModals({...modals,imgs:true})} className="btn px-3 py-1.5 bg-purple-900/50 text-purple-300 rounded hover:bg-purple-900 border border-purple-900/50 text-sm"><i className="fas fa-images mr-1"></i> Images</button>
                                         
-                                        {/* 🔽 SELECTOR DE IA MEJORADO 🔽 */}
-                                        <div className="flex items-center gap-1 bg-slate-700 rounded p-0.5 border border-slate-600">
-                                            <select 
-                                                value={aiProvider} 
-                                                onChange={(e) => setAiProvider(e.target.value)}
-                                                className="bg-transparent text-xs text-white p-1 outline-none font-bold cursor-pointer hover:text-blue-300"
-                                            >
-                                                <option value="google" className="bg-slate-800">Gemini 2.0 (Google)</option>
-                                                <option value="groq" className="bg-slate-800">Llama 3 (Groq)</option>
-                                                <option value="sambanova" className="bg-slate-800">Qwen 2.5 (China)</option>
-                                                <option value="cohere" className="bg-slate-800">Command R+ (Cohere)</option>
-                                            </select>
-                                            <button 
-                                                onClick={runAI} 
-                                                disabled={aiLoading} 
-                                                className="px-2 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded text-xs font-bold transition flex items-center gap-1"
-                                                title="Analizar con el proveedor seleccionado"
-                                            >
-                                                {aiLoading ? <i className="fas fa-spinner fa-spin"></i> : <i className="fas fa-magic"></i>}
-                                            </button>
-                                        </div>
-                                        {/* 🔼 FIN SELECTOR 🔼 */}
+                                        {/* BOTÓN MÁGICO QUE ABRE EL MENÚ */}
+                                        <button 
+                                            onClick={() => setModals({...modals, ai: true})} 
+                                            disabled={aiLoading}
+                                            className="px-3 py-1.5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white rounded text-sm font-bold shadow-lg shadow-purple-500/20 border border-blue-500 transition-all flex items-center gap-2"
+                                        >
+                                            {aiLoading ? <><i className="fas fa-spinner fa-spin"></i> Thinking...</> : <><i className="fas fa-magic"></i> AI Analyze</>}
+                                        </button>
 
                                         <button onClick={()=>{setSt('idle');setFm(null)}} className="btn px-3 py-1.5 bg-slate-700 text-gray-300 rounded hover:bg-slate-600 border border-slate-600 text-sm"><i className="fas fa-redo mr-1"></i> New</button>
                                         <div className="flex-grow hidden sm:block"></div>
@@ -672,6 +623,7 @@ ${tagsString}
                     </main>
                     {fm && <MetadataModal isOpen={modals.meta} onClose={()=>setModals({...modals,meta:false})} fm={fm} onSave={handleMetadataSave} sDates={sDates} />}
                     {fm && <ImageManager isOpen={modals.imgs} onClose={()=>setModals({...modals,imgs:false})} md={final} name={generateFilename(fm).replace('.md','')} />}
+                    {fm && <AISelectionModal isOpen={modals.ai} onClose={()=>setModals({...modals,ai:false})} onSelect={executeAI} loading={aiLoading} />}
                 </div>
             );
         };
