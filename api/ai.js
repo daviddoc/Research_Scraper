@@ -21,65 +21,55 @@ export default async function handler(req, res) {
     let result;
     console.log(`🤖 Solicitando a: ${preferredProvider || 'Automático'}`);
 
-    // SELECCIÓN DE PROVEEDOR
-    if (preferredProvider === 'google' && keys.google) {
-        result = await callGoogle(keys.google, text);
-    } 
-    else if (preferredProvider === 'groq' && keys.groq) {
-        result = await callGroq(keys.groq, text);
-    }
-    else if (preferredProvider === 'sambanova' && keys.sambanova) {
-        result = await callSambaNova(keys.sambanova, text);
-    }
-    else if (preferredProvider === 'cohere' && keys.cohere) {
-        result = await callCohere(keys.cohere, text);
-    }
+    if (preferredProvider === 'google' && keys.google) result = await callGoogle(keys.google, text);
+    else if (preferredProvider === 'groq' && keys.groq) result = await callGroq(keys.groq, text);
+    else if (preferredProvider === 'sambanova' && keys.sambanova) result = await callSambaNova(keys.sambanova, text);
+    else if (preferredProvider === 'cohere' && keys.cohere) result = await callCohere(keys.cohere, text);
     else {
         // Fallback automático
         if (keys.google) result = await callGoogle(keys.google, text);
         else if (keys.groq) result = await callGroq(keys.groq, text);
-        else throw new Error("No hay proveedores configurados o seleccionados.");
+        else throw new Error("No hay proveedores configurados.");
     }
 
     return res.status(200).json(result);
 
   } catch (e) {
-    console.error("Error en AI Handler:", e);
+    console.error("Error Handler:", e);
     return res.status(500).json({ error: e.message });
   }
 }
 
-// --- HERRAMIENTA DE LIMPIEZA ---
+// --- LIMPIEZA JSON ---
 function cleanAndParseJSON(rawText) {
-    if (!rawText) throw new Error("La IA devolvió una respuesta vacía.");
+    if (!rawText) throw new Error("Respuesta vacía.");
     try { return JSON.parse(rawText); } catch (e) {}
-    const firstBrace = rawText.indexOf('{');
-    const lastBrace = rawText.lastIndexOf('}');
-    if (firstBrace !== -1 && lastBrace !== -1) {
-        const jsonCandidate = rawText.substring(firstBrace, lastBrace + 1);
-        try {
-            return JSON.parse(jsonCandidate);
-        } catch (e) {
-            try {
-                const cleaned = jsonCandidate.replace(/[\n\r\t]/g, ' '); 
-                return JSON.parse(cleaned);
-            } catch (e2) {}
-        }
+    
+    // Intentar extraer bloque JSON
+    const first = rawText.indexOf('{');
+    const last = rawText.lastIndexOf('}');
+    if (first !== -1 && last !== -1) {
+        try { return JSON.parse(rawText.substring(first, last + 1)); } catch (e) {}
     }
-    throw new Error(`JSON inválido. Respuesta: ${rawText.substring(0, 100)}...`);
+    // Fallback: limpieza agresiva de caracteres de control
+    try { return JSON.parse(rawText.replace(/[\n\r\t]/g, ' ')); } catch (e) {}
+    
+    throw new Error(`No se pudo leer el JSON: ${rawText.substring(0, 50)}...`);
 }
 
-// --- PROVEEDORES ACTUALIZADOS ---
+// --- PROVEEDORES ---
 
-// 1. GOOGLE (Gemini 2.0)
+// 1. GOOGLE
 async function callGoogle(key, text) {
   const models = ['gemini-2.0-flash', 'gemini-1.5-flash'];
   for (const model of models) {
     try {
-      const prompt = `Analiza y responde SOLO JSON: { "summary": "...", "keyPoints": "...", "suggestedTags": [] }. TEXTO: ${text.substring(0, 30000)}`;
       const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json" } })
+        body: JSON.stringify({ 
+            contents: [{ parts: [{ text: `Analiza y responde SOLO JSON válido: { "summary": "...", "keyPoints": "...", "suggestedTags": [] }. TEXTO: ${text.substring(0, 30000)}` }] }], 
+            generationConfig: { responseMimeType: "application/json" } 
+        })
       });
       if (!res.ok) throw new Error(await res.text());
       const data = await res.json();
@@ -89,13 +79,13 @@ async function callGoogle(key, text) {
   throw new Error("Gemini falló.");
 }
 
-// 2. GROQ (Llama 3.3 70B - Muy Rápido)
+// 2. GROQ
 async function callGroq(key, text) {
   const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST', headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({ 
         model: 'llama-3.3-70b-versatile', 
-        messages: [{ role: "user", content: `Analiza y devuelve JSON: { "summary": "...", "keyPoints": "...", "suggestedTags": [] }. TEXTO: ${text.substring(0, 15000)}` }], 
+        messages: [{ role: "user", content: `Devuelve JSON: { "summary": "...", "keyPoints": "...", "suggestedTags": [] }. TEXTO: ${text.substring(0, 15000)}` }], 
         response_format: { type: "json_object" } 
     })
   });
@@ -104,44 +94,33 @@ async function callGroq(key, text) {
   return JSON.parse(data.choices[0].message.content);
 }
 
-// 3. SAMBANOVA (Llama 3.1 405B - El Gigante "Brainiac")
-// Nota: Qwen fue retirado, usamos el 405B que es el modelo open source más inteligente del mundo ahora mismo.
+// 3. SAMBANOVA (CORREGIDO: Usamos 70B que es estable en free tier)
 async function callSambaNova(key, text) {
-  const prompt = `
-    Eres un analista experto. Tu tarea es analizar el texto académico proporcionado.
-    IMPORTANTE: Tu respuesta debe ser ESTRICTAMENTE un objeto JSON válido. NO escribas introducciones.
-    Formato: { "summary": "Resumen en español", "keyPoints": "Lista markdown", "suggestedTags": ["tag1"] }
-    TEXTO: ${text.substring(0, 10000)}`; 
-    
   const res = await fetch('https://api.sambanova.ai/v1/chat/completions', {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: "Meta-Llama-3.1-405B-Instruct", // MODELO ACTUALIZADO Y MASIVO
-      messages: [{ role: "user", content: prompt }],
-      temperature: 0.1,
-      top_p: 0.1
+      model: "Meta-Llama-3.1-70B-Instruct", // CAMBIO A MODELO ESTABLE
+      messages: [{ role: "user", content: `Analiza el texto. Responde ÚNICAMENTE con JSON válido: { "summary": "Resumen español", "keyPoints": "Markdown list", "suggestedTags": ["tag"] }. TEXTO: ${text.substring(0, 10000)}` }],
+      temperature: 0.1
     })
   });
-
-  if (!res.ok) throw new Error(`SambaNova Error: ${await res.text()}`);
+  if (!res.ok) throw new Error(`SambaNova: ${await res.text()}`);
   const data = await res.json();
   return cleanAndParseJSON(data.choices[0].message.content);
 }
 
-// 4. COHERE (Command R+ Actualizado)
+// 4. COHERE (CORREGIDO: Versión específica)
 async function callCohere(key, text) {
   const res = await fetch('https://api.cohere.com/v1/chat', {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: "command-r-plus-08-2024", // MODELO ACTUALIZADO CON FECHA
-      message: `Analiza este texto. Devuelve SOLO un objeto JSON con: summary (español), keyPoints (markdown), suggestedTags (array). TEXTO: ${text.substring(0, 20000)}`,
-      preamble: "Eres un robot que SOLO habla JSON. No digas 'Aquí tienes'. Solo JSON."
+      model: "command-r-plus-08-2024", // CAMBIO A ID EXACTO
+      message: `Analiza y devuelve SOLO JSON puro: { "summary": "Español", "keyPoints": "Markdown", "suggestedTags": [] }. TEXTO: ${text.substring(0, 20000)}`
     })
   });
-
-  if (!res.ok) throw new Error(`Cohere Error: ${await res.text()}`);
+  if (!res.ok) throw new Error(`Cohere: ${await res.text()}`);
   const data = await res.json();
   return cleanAndParseJSON(data.text);
 }
