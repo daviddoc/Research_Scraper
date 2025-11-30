@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Research Scraper AI (Multi-Model)</title>
+    <title>Research Scraper AI</title>
+    <!-- FAVICON: Icono de libro en SVG data URI -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>">
+
     <!-- Styles & Icons -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -65,7 +68,6 @@
         const AVAILABLE_TAGS = ["[ PROCESOS ]  Atención","[ PROCESOS ]  Autonomía","[ PROCESOS ]  Carga cognitiva","[ PROCESOS ]  Ciencias del Aprendizaje","[ PROCESOS ]  Creatividad","[ PROCESOS ]  Desarrollo cognitivo","[ PROCESOS ]  Estilos de aprendizaje","[ PROCESOS ]  Funciones ejecutivas","[ PROCESOS ]  Memoria","[ PROCESOS ]  Metacognición","[ PROCESOS ]  Motivación","[ PROCESOS ]  Neuroeducación","[ PROCESOS ]  Pensamiento Crítico","[ PROCESOS ]  Psicología","[ PROCESOS ]  Salud Mental","[ METODOLOGÍAS ]  Aprendizaje Basado en Proyectos","[ METODOLOGÍAS ]  Aula del Futuro","[ METODOLOGÍAS ]  Biblioteca","[ METODOLOGÍAS ]  Aprendizaje cooperativo","[ METODOLOGÍAS ]  Aprendizaje Servicio","[ METODOLOGÍAS ]  Flipped Classroom","[ METODOLOGÍAS ]  Gamificación","[ DIDÁCTICA ]  Competencias clave","[ DIDÁCTICA ]  Idiomas","[ DIDÁCTICA ]  Ciencias","[ DIDÁCTICA ]  Matemáticas","[ DIDÁCTICA ]  Artística","[ DIDÁCTICA ]  Sociales","[ DIDÁCTICA ]  Salud","[ DIDÁCTICA ]  Escritura","[ DIDÁCTICA ]  Lectura","[ DIDÁCTICA ]  Lenguaje oral","[ DIVERSIDAD ]  Adaptaciones curriculares","[ DIVERSIDAD ]  Altas Capacidades","[ DIVERSIDAD ]  Autismo","[ DIVERSIDAD ]  Dislexia","[ DIVERSIDAD ]  DUA","[ DIVERSIDAD ]  Educación Inclusiva","[ DIVERSIDAD ]  Necesidades Educativas Especiales","[ DIVERSIDAD ]  TDAH","[ GESTIÓN ]  Absentismo escolar","[ GESTIÓN ]  Bienestar docente","[ GESTIÓN ]  Currículo","[ GESTIÓN ]  Formación del profesorado","[ GESTIÓN ]  Gestión del aula","[ GESTIÓN ]  Liderazgo educativo","[ GESTIÓN ]  Orientación educativa","[ GESTIÓN ]  Política Educativa","[ GESTIÓN ]  Rendimiento académico","[ GESTIÓN ]  Tutoría","[ CONVIVENCIA ]  Acoso escolar","[ CONVIVENCIA ]  Clima de aula","[ CONVIVENCIA ]  Coeducación","[ CONVIVENCIA ]  Desigualdad educativa","[ CONVIVENCIA ]  Educación Emocional","[ CONVIVENCIA ]  Ética","[ CONVIVENCIA ]  Familia-Escuela","[ CONVIVENCIA ]  Resolución de conflictos","[ TIC ]  Inteligencia Artificial","[ TIC ]  Pensamiento Computacional","[ TIC ]  Robótica","[ TIC ]  Competencia digital","[ EVALUACIÓN ]  Evaluación","[ EVALUACIÓN ]  Feedback","[ INVESTIGACIÓN ]  Meta-análisis","[ INVESTIGACIÓN ]  Revisión Sistemática","[ INVESTIGACIÓN ]  Teoría Fundamentada","[ NIVEL ]  Bachillerato","[ NIVEL ]  Infantil","[ NIVEL ]  Primaria","[ NIVEL ]  Secundaria","[ NIVEL ]  Superior","#Gap","#Seed"].sort();
 
         // 🚀 API CONFIGURATION (MODO HÍBRIDO) 🚀
-        // Usamos la dirección real de Vercel para que funcione tanto en la web como en local (file://)
         const BASE_URL = "https://research-scraper-mu.vercel.app"; 
         const PROXY_ENDPOINT = `${BASE_URL}/api/proxy`;
         const AI_ENDPOINT = `${BASE_URL}/api/ai`;
@@ -391,10 +393,27 @@ ${tagsString}
             if(!isOpen) return null;
             
             const models = [
-                { id: 'google', name: 'Google Gemini 2.0', desc: 'Rápido, creativo y gran contexto.', color: 'from-blue-600 to-blue-400', icon: 'fa-google' },
-                { id: 'groq', name: 'Groq Llama 3.3', desc: 'Súper rápido y objetivo.', color: 'from-orange-600 to-orange-400', icon: 'fa-bolt' },
-                { id: 'sambanova', name: 'Llama 3.1 70B', desc: 'Estable y potente para análisis.', color: 'from-purple-600 to-purple-400', icon: 'fa-brain' },
-                { id: 'cohere', name: 'Cohere Command R+', desc: 'Especialista en resúmenes empresariales.', color: 'from-teal-600 to-teal-400', icon: 'fa-briefcase' }
+                { 
+                    id: 'google', 
+                    name: 'Google Gemini 2.0', 
+                    desc: 'Rápido, creativo y gran contexto.', 
+                    color: 'from-blue-600 to-blue-400', 
+                    path: 'M24 4.5a19.5 19.5 0 1 0 19.5 19.5A19.5 19.5 0 0 0 24 4.5zm8.9 22.8a12.6 12.6 0 0 1-12.2 0 12.6 12.6 0 0 1 0-12.2 12.6 12.6 0 0 1 12.2 0 12.6 12.6 0 0 1 0 12.2z' // Abstract shape for Google
+                },
+                { 
+                    id: 'groq', 
+                    name: 'Groq Llama 3.3', 
+                    desc: 'Súper rápido y objetivo.', 
+                    color: 'from-orange-600 to-orange-400', 
+                    path: 'M28 2L14 26h10l-4 20 14-24H24z' // Lightning bolt
+                },
+                { 
+                    id: 'cohere', 
+                    name: 'Cohere Command R+', 
+                    desc: 'Especialista en resúmenes empresariales.', 
+                    color: 'from-teal-600 to-teal-400', 
+                    path: 'M8 12a4 4 0 0 1 4-4h24a4 4 0 0 1 4 4v20a4 4 0 0 1-4 4H12a4 4 0 0 1-4-4V12zm12 6h16M20 22h8' // Briefcase-ish
+                }
             ];
 
             return (
@@ -410,8 +429,10 @@ ${tagsString}
                                     className="w-full text-left p-4 rounded-xl bg-slate-700/50 hover:bg-slate-700 border border-slate-600 hover:border-blue-500/50 transition group relative overflow-hidden">
                                     <div className={`absolute inset-0 bg-gradient-to-r ${m.color} opacity-0 group-hover:opacity-10 transition duration-300`}></div>
                                     <div className="flex items-center gap-4 relative z-10">
-                                        <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${m.color} flex items-center justify-center shadow-lg`}>
-                                            <i className={`fab ${m.icon === 'fa-bolt' ? 'fas' : ''} ${m.icon} text-white text-lg`}></i>
+                                        <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${m.color} flex items-center justify-center shadow-lg shrink-0`}>
+                                            <svg viewBox="0 0 48 48" className="w-6 h-6 fill-white" xmlns="http://www.w3.org/2000/svg">
+                                                <path d={m.path} />
+                                            </svg>
                                         </div>
                                         <div>
                                             <h4 className="font-bold text-gray-100">{m.name}</h4>
