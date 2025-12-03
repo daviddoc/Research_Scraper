@@ -156,10 +156,8 @@
         const getCurrentDate = () => new Date().toISOString().split('T')[0];
         
         // --- HELPER PARA BAJAR NIVEL DE ENCABEZADOS ---
-        // Esto asegura que los H1 del documento importado/scrapeado se conviertan en H2, etc.
         const demoteHeadings = (text) => {
             if (!text) return '';
-            // Regex: Busca líneas que empiecen por uno o más # y les añade uno extra
             return text.replace(/^(#+)(?=\s)/gm, '#$1');
         };
 
@@ -218,7 +216,7 @@ ${tagsString}
             return { title: extract('title'), author: extract('author'), date: extract('date'), created: extract('created'), source: extract('source'), source_type: extract('source_type'), tags: tags };
         };
 
-        // --- PARSERS ---
+        // --- PARSERS (Reddit, Twitter, etc) ---
         const processRedditJson = (jsonStr, url) => {
             try {
                 const data = typeof jsonStr === 'string' ? JSON.parse(jsonStr) : jsonStr;
@@ -745,41 +743,43 @@ ${tagsString}
                     </nav>
                     <main className="flex-1 flex flex-col overflow-hidden max-w-[1600px] mx-auto w-full relative">
                         {st !== 'success' ? (
-                            <div className="flex-1 overflow-y-auto p-4 flex items-center justify-center">
-                                <div className="w-full max-w-2xl space-y-6 my-4">
-                                    
-                                    {/* SECTION 1: EXTRACT */}
-                                    <div className="bg-slate-800 rounded-2xl shadow-2xl p-6 md:p-8 border border-slate-700">
-                                        <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-center text-white">Extract Content</h2>
-                                        <div className="space-y-4 md:space-y-6">
-                                            <form onSubmit={e=>{e.preventDefault();process('url',e.target.elements.url.value)}} className="flex flex-col sm:flex-row gap-2">
-                                                <input name="url" type="url" placeholder="Paste article URL..." className="flex-1 p-3 md:p-4 rounded-xl bg-slate-900 border border-slate-600 focus:border-blue-500 outline-none transition text-white" required />
-                                                <button disabled={st==='scraping'} className="px-6 py-3 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-800 rounded-xl font-bold transition shadow-lg shadow-blue-600/20 text-white flex items-center justify-center gap-2 min-w-[120px]">
-                                                    {st==='scraping' ? <><i className="fas fa-spinner fa-spin"></i> Processing...</> : <><i className="fas fa-search"></i> Scrape</>}
-                                                </button>
-                                            </form>
-                                            <div className="relative flex py-2 items-center"><div className="flex-grow border-t border-slate-600"></div><span className="flex-shrink-0 mx-4 text-slate-400 text-sm">OR</span><div className="flex-grow border-t border-slate-600"></div></div>
-                                            <div className="relative border-2 border-dashed border-slate-600 rounded-xl p-6 md:p-8 text-center hover:bg-slate-700/50 transition group cursor-pointer">
-                                                <input type="file" accept=".pdf" onChange={e=>e.target.files[0]&&process('pdf',e.target.files[0])} className="absolute inset-0 opacity-0 cursor-pointer" />
-                                                <i className="fas fa-file-pdf text-4xl text-slate-500 group-hover:text-red-400 mb-3 transition"></i>
-                                                <p className="text-slate-300 font-medium">Drop PDF here or click to upload</p>
+                            <div className="flex-1 overflow-y-auto p-4 bg-slate-900">
+                                <div className="min-h-full flex items-center justify-center p-4">
+                                    <div className="w-full max-w-2xl space-y-6 my-4">
+                                        
+                                        {/* SECTION 1: EXTRACT */}
+                                        <div className="bg-slate-800 rounded-2xl shadow-2xl p-6 md:p-8 border border-slate-700">
+                                            <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-center text-white">Extract Content</h2>
+                                            <div className="space-y-4 md:space-y-6">
+                                                <form onSubmit={e=>{e.preventDefault();process('url',e.target.elements.url.value)}} className="flex flex-col sm:flex-row gap-2">
+                                                    <input name="url" type="url" placeholder="Paste article URL..." className="flex-1 p-3 md:p-4 rounded-xl bg-slate-900 border border-slate-600 focus:border-blue-500 outline-none transition text-white" required />
+                                                    <button disabled={st==='scraping'} className="px-6 py-3 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-800 rounded-xl font-bold transition shadow-lg shadow-blue-600/20 text-white flex items-center justify-center gap-2 min-w-[120px]">
+                                                        {st==='scraping' ? <><i className="fas fa-spinner fa-spin"></i> Processing...</> : <><i className="fas fa-search"></i> Scrape</>}
+                                                    </button>
+                                                </form>
+                                                <div className="relative flex py-2 items-center"><div className="flex-grow border-t border-slate-600"></div><span className="flex-shrink-0 mx-4 text-slate-400 text-sm">OR</span><div className="flex-grow border-t border-slate-600"></div></div>
+                                                <div className="relative border-2 border-dashed border-slate-600 rounded-xl p-6 md:p-8 text-center hover:bg-slate-700/50 transition group cursor-pointer">
+                                                    <input type="file" accept=".pdf" onChange={e=>e.target.files[0]&&process('pdf',e.target.files[0])} className="absolute inset-0 opacity-0 cursor-pointer" />
+                                                    <i className="fas fa-file-pdf text-4xl text-slate-500 group-hover:text-red-400 mb-3 transition"></i>
+                                                    <p className="text-slate-300 font-medium">Drop PDF here or click to upload</p>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    {/* SECTION 2: IMPORT (NUEVA SECCIÓN) */}
-                                    <div className="bg-slate-800 rounded-2xl shadow-2xl p-6 md:p-8 border border-slate-700">
-                                        <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-center text-white">Import Content</h2>
-                                        <div className="relative border-2 border-dashed border-blue-500/30 rounded-xl p-6 text-center hover:bg-blue-900/10 transition group cursor-pointer">
-                                            <input type="file" accept=".md,.txt" onChange={e=>e.target.files[0]&&importMarkdown(e.target.files[0])} className="absolute inset-0 opacity-0 cursor-pointer" />
-                                            <button className="px-6 py-3 bg-blue-600 hover:bg-blue-500 rounded-xl font-bold transition shadow-lg text-white flex items-center justify-center gap-2 mx-auto pointer-events-none">
-                                                <i className="fas fa-file-import"></i> Import Markdown File
-                                            </button>
-                                            <p className="text-slate-400 text-sm mt-3">Load existing .md files to edit or analyze with AI</p>
+                                        {/* SECTION 2: IMPORT */}
+                                        <div className="bg-slate-800 rounded-2xl shadow-2xl p-6 md:p-8 border border-slate-700">
+                                            <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-center text-white">Import Content</h2>
+                                            <div className="relative border-2 border-dashed border-blue-500/30 rounded-xl p-6 text-center hover:bg-blue-900/10 transition group cursor-pointer">
+                                                <input type="file" accept=".md,.txt" onChange={e=>e.target.files[0]&&importMarkdown(e.target.files[0])} className="absolute inset-0 opacity-0 cursor-pointer" />
+                                                <button className="px-6 py-3 bg-blue-600 hover:bg-blue-500 rounded-xl font-bold transition shadow-lg text-white flex items-center justify-center gap-2 mx-auto pointer-events-none">
+                                                    <i className="fas fa-file-import"></i> Import Markdown File
+                                                </button>
+                                                <p className="text-slate-400 text-sm mt-3">Load existing .md files to edit or analyze with AI</p>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    {st === 'error' && <div className="mt-6 text-center text-red-400 bg-red-900/20 p-3 rounded-lg border border-red-900">{msg}</div>}
+                                        {st === 'error' && <div className="mt-6 text-center text-red-400 bg-red-900/20 p-3 rounded-lg border border-red-900">{msg}</div>}
+                                    </div>
                                 </div>
                             </div>
                         ) : (
